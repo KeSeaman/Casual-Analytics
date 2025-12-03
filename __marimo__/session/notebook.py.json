@@ -6,7 +6,7 @@
   "cells": [
     {
       "id": "Hbol",
-      "code_hash": "4720fc582f50a41055e278bdb312be20",
+      "code_hash": "a698680aff40d29983a4b21436b0d697",
       "outputs": [
         {
           "type": "data",
@@ -39,7 +39,7 @@
     },
     {
       "id": "vblA",
-      "code_hash": "3e703b4f8aeb59a2b53a475f019b063f",
+      "code_hash": "a5324c81dd83294f90183b9548d5860e",
       "outputs": [
         {
           "type": "data",
@@ -59,7 +59,7 @@
     },
     {
       "id": "bkHC",
-      "code_hash": "3919e9e4f6b7f0e2d125570e5e2ea42c",
+      "code_hash": "6fa62c929a7293081954dd05c02212b1",
       "outputs": [
         {
           "type": "data",
@@ -72,7 +72,7 @@
     },
     {
       "id": "lEQa",
-      "code_hash": "bfb0302619b3e15a0bf9aee02be9ffe1",
+      "code_hash": "2ffa337aa47e76a979c95b81a8671a79",
       "outputs": [
         {
           "type": "data",
@@ -81,19 +81,19 @@
           }
         }
       ],
-      "console": [
-        {
-          "type": "stream",
-          "name": "stderr",
-          "text": "/home/captc/Devwork/causal_project_v2/.venv/lib/python3.12/site-packages/econml/dml/dml.py:51: UserWarning: First stage model has discrete target but model is not a classifier!\n  warn('First stage model has discrete target but model is not a classifier!', UserWarning)\n/home/captc/Devwork/causal_project_v2/.venv/lib/python3.12/site-packages/econml/dml/dml.py:51: UserWarning: First stage model has discrete target but model is not a classifier!\n  warn('First stage model has discrete target but model is not a classifier!', UserWarning)\n",
-          "mimetype": "text/plain"
-        }
-      ]
+      "console": []
     },
     {
       "id": "PKri",
-      "code_hash": "39d0e08681ca6f666e27f3181b7a9c1b",
-      "outputs": [],
+      "code_hash": "723978faa7402592c45d75ab5a765532",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
       "console": []
     }
   ]

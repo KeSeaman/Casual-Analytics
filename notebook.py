@@ -1,12 +1,12 @@
 import marimo
 
 __generated_with = "0.18.1"
-app = marimo.App()
+app = marimo.App(width="medium")
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    title=mo.md(r"""
     # 🧩 Functional Causal Inference Portfolio
 
     A pure functional architecture for causal analysis, featuring:
@@ -28,15 +28,16 @@ def _():
 
 @app.cell
 def _(data_loader, mo):
-    # Load Data
-    url = "https://raw.githubusercontent.com/scunning1975/mixtape/master/nsw_mixtape.csv"
-    df = data_loader.load_nsw(url)
+    # Load Data from NBER (nsw_treated.txt + nsw_control.txt)
+    df = data_loader.load_nsw()
 
     if df is not None:
         df = data_loader.preprocess_nsw(df)
-        mo.md(f"**✅ Data Loaded**: {len(df)} observations from NSW Mixtape.")
+        status = mo.md(f"**✅ Data Loaded**: {len(df)} observations from NBER NSW dataset.")
     else:
-        mo.md("**⚠️ Data Load Failed**")
+        df = None
+        status = mo.md("**⚠️ Data Load Failed**")
+
     return (df,)
 
 
@@ -55,7 +56,7 @@ def _(df, foundational, mo):
         # 3. Rubin (Propensity Score)
         ate_rubin = foundational.estimate_ate_rubin(df, "treat", "re78", covariates)
 
-        mo.md(
+        foundational_output = mo.md(
             f"""
             ### 🏛️ Foundational Estimates
             - **Neyman (Diff-in-Means)**: ${ate_neyman:.2f}
@@ -66,6 +67,8 @@ def _(df, foundational, mo):
     else:
         ate_neyman, ate_mle, ate_rubin = 0.0, 0.0, 0.0
         covariates = []
+        foundational_output = None
+
     return ate_mle, ate_neyman, ate_rubin, covariates
 
 
@@ -81,7 +84,7 @@ def _(causal, covariates, df, mo):
         # This is a bit contrived for NSW, but demonstrates the method.
         acme, ade, total = causal.estimate_mediation(df, "treat", "re75", "re78", ["age", "education"])
 
-        mo.md(
+        causal_output = mo.md(
             f"""
             ### 🌲 Causal & Machine Learning
             - **Causal Forest (Intel)**: ${ate_forest:.2f}
@@ -90,6 +93,8 @@ def _(causal, covariates, df, mo):
         )
     else:
         ate_forest, acme, ade, total = 0.0, 0.0, 0.0, 0.0
+        causal_output = None
+
     return (ate_forest,)
 
 
@@ -105,13 +110,13 @@ def _(ate_forest, ate_mle, ate_neyman, ate_rubin, df, mo, visualization):
         }
 
         plot = visualization.plot_ate_comparison(results)
-
-        mo.vstack([
+        viz_output = mo.vstack([
             mo.md("### 📊 Method Comparison"),
             plot
         ])
     else:
-        plot, results = None, {}
+        viz_output = None
+
     return
 
 
