@@ -1,2 +1,0 @@
-Extension for Scikit-learn* enabled (https://github.com/uxlfoundation/scikit-learn-intelex)
-Intel Extension verified

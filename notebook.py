@@ -9,156 +9,112 @@ def _():
     import marimo as mo
     import polars as pl
     import numpy as np
-    import causal_rust_core as crc
-    from econml.dml import CausalForestDML
-    from sklearn.linear_model import LassoCV
-    import time
-
-    # Intel Acceleration
-    try:
-        from sklearnex import patch_sklearn
-        patch_sklearn()
-        print("🚀 Intel Acceleration Enabled: Using scikit-learn-intelex")
-        gpu_available = True
-    except ImportError:
-        print("🐢 Intel Extension not found: Using stock Scikit-Learn")
-        gpu_available = False
-
-    from sklearn.ensemble import RandomForestRegressor
-
-    return (
-        CausalForestDML,
-        RandomForestRegressor,
-        crc,
-        gpu_available,
-        mo,
-        np,
-        pl,
-        time,
-    )
+    from causal_lib import data_loader, foundational, causal, advanced, visualization
+    return causal, data_loader, foundational, mo, visualization
 
 
 @app.cell
 def _(mo):
     mo.md(r"""
-    # 🚀 High-Performance Causal Inference Portfolio
+    # 🧩 Functional Causal Inference Portfolio
 
-    This project demonstrates a hybrid **Rust/Python** architecture for causal inference.
-
-    - **Rust Core**: Ultra-fast OLS, IV/2SLS, and DiD implementations using `linfa` and `polars`.
-    - **Python Frontend**: Interactive analysis with `marimo` and `econml`.
-    - **GPU Acceleration**: Automatic fallback to `cuml` for Causal Forests.
+    A pure functional architecture for causal analysis, featuring:
+    - **Foundational**: MLE, Neyman-Pearson, Rubin (Propensity Scores), Bootstrap
+    - **Causal**: IV/2SLS (Rust), Causal Forests (Intel Accelerated), Mediation
+    - **Longitudinal**: Difference-in-Differences (Rust)
     """)
     return
 
 
 @app.cell
-def _(np, pl):
-    def generate_data(n=100_000):
-        rng = np.random.default_rng(42)
+def _(data_loader, mo):
+    # Load Data
+    url = "https://raw.githubusercontent.com/scunning1975/mixtape/master/nsw_mixtape.csv"
+    df = data_loader.load_nsw(url)
 
-        # Confounders
-        W = rng.normal(0, 1, size=(n, 5))
-
-        # Instrument (for IV)
-        Z = rng.binomial(1, 0.5, size=n)
-
-        # Treatment (endogenous)
-        # T depends on Z and W
-        T_lat = 0.5 * Z + 0.3 * W[:, 0] + rng.normal(0, 0.5, size=n)
-        T = (T_lat > 0).astype(float)
-
-        # Outcome
-        # True ATE = 2.0
-        Y = 2.0 * T + 0.5 * W[:, 0] + 0.3 * W[:, 1] + rng.normal(0, 1, size=n)
-
-        # Time and Group (for DiD)
-        time = rng.binomial(1, 0.5, size=n)
-        group = rng.binomial(1, 0.5, size=n)
-        # DiD effect = 3.0
-        Y_did = 3.0 * (time * group) + 1.0 * time + 0.5 * group + rng.normal(0, 1, size=n)
-
-        df = pl.DataFrame({
-            "outcome": Y,
-            "treatment": T,
-            "instrument": Z,
-            "outcome_did": Y_did,
-            "time": time,
-            "group": group,
-        })
-
-        # Add confounders
-        for i in range(5):
-            df = df.with_columns(pl.Series(f"w{i}", W[:, i]))
-
-        return df
-
-    df = generate_data()
-    print(f"Generated {len(df):,} rows")
+    if df is not None:
+        df = data_loader.preprocess_nsw(df)
+        mo.md(f"**✅ Data Loaded**: {len(df)} observations from NSW Mixtape.")
+    else:
+        mo.md("**⚠️ Data Load Failed**")
     return (df,)
 
 
 @app.cell
-def _(crc, df, mo, time):
-    # Rust OLS
-    start_ols = time.time()
-    ols_ate = crc.ols_fit(df, "outcome", ["treatment", "w0", "w1", "w2", "w3", "w4"])
-    ols_time = (time.time() - start_ols) * 1000
+def _(df, foundational, mo):
+    # Foundational Methods
+    if df is not None:
+        # 1. Neyman-Pearson (Diff-in-Means)
+        ate_neyman = foundational.estimate_ate_neyman(df, "treat", "re78")
 
-    mo.md(f"**Rust OLS ATE**: {ols_ate:.4f} ({ols_time:.2f} ms)")
-    return
+        # 2. MLE (OLS)
+        # Covariates: age, education, black, hispanic, married, nodegree, re75
+        covariates = ["age", "education", "black", "hispanic", "married", "nodegree", "re75"]
+        ate_mle = foundational.estimate_ate_mle(df, "treat", "re78", covariates)
 
+        # 3. Rubin (Propensity Score)
+        ate_rubin = foundational.estimate_ate_rubin(df, "treat", "re78", covariates)
 
-@app.cell
-def _(crc, df, mo, time):
-    # Rust IV
-    start_iv = time.time()
-    iv_ate = crc.iv_fit(df, "outcome", "treatment", "instrument")
-    iv_time = (time.time() - start_iv) * 1000
-
-    mo.md(f"**Rust IV/2SLS ATE**: {iv_ate:.4f} ({iv_time:.2f} ms)")
-    return
-
-
-@app.cell
-def _(crc, df, mo, time):
-    # Rust DiD
-    start_did = time.time()
-    did_ate = crc.did_fit(df, "outcome_did", "group", "time")
-    did_time = (time.time() - start_did) * 1000
-
-    mo.md(f"**Rust DiD ATE**: {did_ate:.4f} ({did_time:.2f} ms)")
-    return
-
-
-@app.cell
-def _(CausalForestDML, RandomForestRegressor, df, gpu_available, mo):
-    # EconML Causal Forest
-
-    X = df.select([f"w{i}" for i in range(5)]).to_numpy()
-    T = df.select("treatment").to_numpy().ravel()
-    Y = df.select("outcome").to_numpy().ravel()
-
-    if gpu_available:
-        # Intel extension patches sklearn, so we use the same class
-        model_y = RandomForestRegressor(n_estimators=100)
-        model_t = RandomForestRegressor(n_estimators=100)
+        mo.md(
+            f"""
+            ### 🏛️ Foundational Estimates
+            - **Neyman (Diff-in-Means)**: ${ate_neyman:.2f}
+            - **MLE (OLS)**: ${ate_mle:.2f}
+            - **Rubin (IPW)**: ${ate_rubin:.2f}
+            """
+        )
     else:
-        model_y = RandomForestRegressor(n_estimators=100)
-        model_t = RandomForestRegressor(n_estimators=100)
+        ate_neyman, ate_mle, ate_rubin = 0.0, 0.0, 0.0
+        covariates = []
 
-    est = CausalForestDML(
-        model_y=model_y,
-        model_t=model_t,
-        discrete_treatment=True,
-        n_estimators=100,
-        random_state=42
-    )
+    return ate_mle, ate_neyman, ate_rubin, covariates
 
-    est.fit(Y, T, X=X)
-    ate = est.ate(X)
 
-    mo.md(f"**EconML Causal Forest ATE**: {ate:.4f}")
+@app.cell
+def _(causal, covariates, df, mo):
+    # Causal Methods
+    if df is not None:
+        # 1. Causal Forest (Intel Accelerated)
+        ate_forest = causal.estimate_forest(df, "re78", "treat", covariates)
+
+        # 2. Mediation Analysis (Example)
+        # Mediator: re75 (Earnings before treatment) -> Just for demo
+        # This is a bit contrived for NSW, but demonstrates the method.
+        acme, ade, total = causal.estimate_mediation(df, "treat", "re75", "re78", ["age", "education"])
+
+        mo.md(
+            f"""
+            ### 🌲 Causal & Machine Learning
+            - **Causal Forest (Intel)**: ${ate_forest:.2f}
+            - **Mediation (ACME)**: ${acme:.2f} (Indirect effect via re75)
+            """
+        )
+    else:
+        ate_forest, acme, ade, total = 0.0, 0.0, 0.0, 0.0
+
+    return (ate_forest,)
+
+
+@app.cell
+def _(ate_forest, ate_mle, ate_neyman, ate_rubin, df, mo, visualization):
+    # Visualization
+    if df is not None:
+        results = {
+            "Neyman": ate_neyman,
+            "MLE (OLS)": ate_mle,
+            "Rubin (IPW)": ate_rubin,
+            "Causal Forest": ate_forest
+        }
+
+        plot = visualization.plot_ate_comparison(results)
+
+        mo.vstack([
+            mo.md("### 📊 Method Comparison"),
+            plot
+        ])
+    else:
+        plot, results = None, {}
+
     return
 
 

@@ -6,12 +6,12 @@
   "cells": [
     {
       "id": "MJUe",
-      "code_hash": "8f0ec7ad49e2a3730d5d695ce9d3a7a6",
+      "code_hash": "4720fc582f50a41055e278bdb312be20",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"high-performance-causal-inference-portfolio\">\ud83d\ude80 High-Performance Causal Inference Portfolio</h1>\n<span class=\"paragraph\">This project demonstrates a hybrid <strong>Rust/Python</strong> architecture for causal inference.</span>\n<ul>\n<li><strong>Rust Core</strong>: Ultra-fast OLS, IV/2SLS, and DiD implementations using <code>linfa</code> and <code>polars</code>.</li>\n<li><strong>Python Frontend</strong>: Interactive analysis with <code>marimo</code> and <code>econml</code>.</li>\n<li><strong>GPU Acceleration</strong>: Automatic fallback to <code>cuml</code> for Causal Forests.</li>\n</ul></span>"
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"functional-causal-inference-portfolio\">\ud83e\udde9 Functional Causal Inference Portfolio</h1>\n<span class=\"paragraph\">A pure functional architecture for causal analysis, featuring:</span>\n<ul>\n<li><strong>Foundational</strong>: MLE, Neyman-Pearson, Rubin (Propensity Scores), Bootstrap</li>\n<li><strong>Causal</strong>: IV/2SLS (Rust), Causal Forests (Intel Accelerated), Mediation</li>\n<li><strong>Longitudinal</strong>: Difference-in-Differences (Rust)</li>\n</ul></span>"
           }
         }
       ],
@@ -19,7 +19,7 @@
     },
     {
       "id": "Hbol",
-      "code_hash": "3a575f73e3a5cba8fa6829dbfc829b20",
+      "code_hash": "f4989c25bec6683d692c6e2a51663a11",
       "outputs": [
         {
           "type": "data",
@@ -28,18 +28,11 @@
           }
         }
       ],
-      "console": [
-        {
-          "type": "stream",
-          "name": "stdout",
-          "text": "\ud83d\udc22 GPU Not Detected: Using CPU Scikit-Learn\n",
-          "mimetype": "text/plain"
-        }
-      ]
+      "console": []
     },
     {
       "id": "vblA",
-      "code_hash": "e70f2f1d4232a7f579d645d6c8707c93",
+      "code_hash": "3e703b4f8aeb59a2b53a475f019b063f",
       "outputs": [
         {
           "type": "data",
@@ -48,23 +41,16 @@
           }
         }
       ],
-      "console": [
-        {
-          "type": "stream",
-          "name": "stdout",
-          "text": "Generated 100,000 rows\n",
-          "mimetype": "text/plain"
-        }
-      ]
+      "console": []
     },
     {
       "id": "bkHC",
-      "code_hash": "465348700c7a2f9653f382d580bab016",
+      "code_hash": "3919e9e4f6b7f0e2d125570e5e2ea42c",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Rust OLS ATE</strong>: 1.9992 (34.37 ms)</span></span>"
+            "text/plain": ""
           }
         }
       ],
@@ -72,12 +58,12 @@
     },
     {
       "id": "lEQa",
-      "code_hash": "c1a355c2bf046230f210f54a16b8c294",
+      "code_hash": "bfb0302619b3e15a0bf9aee02be9ffe1",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Rust IV/2SLS ATE</strong>: 2.0076 (24.10 ms)</span></span>"
+            "text/plain": ""
           }
         }
       ],
@@ -85,36 +71,16 @@
     },
     {
       "id": "PKri",
-      "code_hash": "92b916a98912971fab8821e815a036d4",
+      "code_hash": "39d0e08681ca6f666e27f3181b7a9c1b",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Rust DiD ATE</strong>: 2.9833 (25.40 ms)</span></span>"
+            "text/plain": ""
           }
         }
       ],
       "console": []
-    },
-    {
-      "id": "Xref",
-      "code_hash": "6bcfe5cb8610cc7a0cb870294586a991",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>EconML Causal Forest ATE</strong>: 1.9787</span></span>"
-          }
-        }
-      ],
-      "console": [
-        {
-          "type": "stream",
-          "name": "stderr",
-          "text": "/home/captc/Devwork/causal_project_v2/.venv/lib/python3.12/site-packages/econml/dml/dml.py:51: UserWarning: First stage model has discrete target but model is not a classifier!\n  warn('First stage model has discrete target but model is not a classifier!', UserWarning)\n/home/captc/Devwork/causal_project_v2/.venv/lib/python3.12/site-packages/econml/dml/dml.py:51: UserWarning: First stage model has discrete target but model is not a classifier!\n  warn('First stage model has discrete target but model is not a classifier!', UserWarning)\n",
-          "mimetype": "text/plain"
-        }
-      ]
     }
   ]
 }
