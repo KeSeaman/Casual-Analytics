@@ -5,7 +5,7 @@
   },
   "cells": [
     {
-      "id": "MJUe",
+      "id": "Hbol",
       "code_hash": "4720fc582f50a41055e278bdb312be20",
       "outputs": [
         {
@@ -18,7 +18,7 @@
       "console": []
     },
     {
-      "id": "Hbol",
+      "id": "MJUe",
       "code_hash": "f4989c25bec6683d692c6e2a51663a11",
       "outputs": [
         {
@@ -28,7 +28,14 @@
           }
         }
       ],
-      "console": []
+      "console": [
+        {
+          "type": "stream",
+          "name": "stderr",
+          "text": "Extension for Scikit-learn* enabled (https://github.com/uxlfoundation/scikit-learn-intelex)\n",
+          "mimetype": "text/plain"
+        }
+      ]
     },
     {
       "id": "vblA",
@@ -41,7 +48,14 @@
           }
         }
       ],
-      "console": []
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "\ud83d\udd04 Fetching NBER data...\n\u2705 Loaded NBER Data: 722 rows (297 treated, 425 control)\n",
+          "mimetype": "text/plain"
+        }
+      ]
     },
     {
       "id": "bkHC",
@@ -67,19 +81,19 @@
           }
         }
       ],
-      "console": []
+      "console": [
+        {
+          "type": "stream",
+          "name": "stderr",
+          "text": "/home/captc/Devwork/causal_project_v2/.venv/lib/python3.12/site-packages/econml/dml/dml.py:51: UserWarning: First stage model has discrete target but model is not a classifier!\n  warn('First stage model has discrete target but model is not a classifier!', UserWarning)\n/home/captc/Devwork/causal_project_v2/.venv/lib/python3.12/site-packages/econml/dml/dml.py:51: UserWarning: First stage model has discrete target but model is not a classifier!\n  warn('First stage model has discrete target but model is not a classifier!', UserWarning)\n",
+          "mimetype": "text/plain"
+        }
+      ]
     },
     {
       "id": "PKri",
       "code_hash": "39d0e08681ca6f666e27f3181b7a9c1b",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
+      "outputs": [],
       "console": []
     }
   ]

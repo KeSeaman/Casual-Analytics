@@ -4,16 +4,7 @@ __generated_with = "0.18.1"
 app = marimo.App()
 
 
-@app.cell
-def _():
-    import marimo as mo
-    import polars as pl
-    import numpy as np
-    from causal_lib import data_loader, foundational, causal, advanced, visualization
-    return causal, data_loader, foundational, mo, visualization
-
-
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     # 🧩 Functional Causal Inference Portfolio
@@ -24,6 +15,15 @@ def _(mo):
     - **Longitudinal**: Difference-in-Differences (Rust)
     """)
     return
+
+
+@app.cell(hide_code=True)
+def _():
+    import marimo as mo
+    import polars as pl
+    import numpy as np
+    from causal_lib import data_loader, foundational, causal, advanced, visualization
+    return causal, data_loader, foundational, mo, visualization
 
 
 @app.cell
@@ -66,7 +66,6 @@ def _(df, foundational, mo):
     else:
         ate_neyman, ate_mle, ate_rubin = 0.0, 0.0, 0.0
         covariates = []
-
     return ate_mle, ate_neyman, ate_rubin, covariates
 
 
@@ -91,7 +90,6 @@ def _(causal, covariates, df, mo):
         )
     else:
         ate_forest, acme, ade, total = 0.0, 0.0, 0.0, 0.0
-
     return (ate_forest,)
 
 
@@ -114,7 +112,6 @@ def _(ate_forest, ate_mle, ate_neyman, ate_rubin, df, mo, visualization):
         ])
     else:
         plot, results = None, {}
-
     return
 
 

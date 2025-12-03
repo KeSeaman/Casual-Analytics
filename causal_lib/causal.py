@@ -2,7 +2,7 @@ import numpy as np
 import polars as pl
 from typing import List, Tuple, Optional
 import causal_rust_core as crc
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from econml.dml import CausalForestDML
 
 # Intel Patching (Side Effect, but idempotent)
@@ -28,8 +28,9 @@ def estimate_forest(df: pl.DataFrame, outcome: str, treatment: str, covariates: 
     X = df.select(covariates).to_numpy()
     
     # Configure models (Intel-patched RF)
+    # Use Regressor for continuous outcome, Classifier for binary treatment
     model_y = RandomForestRegressor(n_estimators=100, random_state=42)
-    model_t = RandomForestRegressor(n_estimators=100, random_state=42)
+    model_t = RandomForestClassifier(n_estimators=100, random_state=42)
     
     est = CausalForestDML(
         model_y=model_y,
