@@ -1,0 +1,18 @@
+[package]
+name = "causal_rust_core"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+members = ["."]
+
+[lib]
+name = "_causal_rust_core"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.22", features = ["extension-module", "abi3-py312"] }
+linfa = "0.7"
+linfa-linear = "0.7"
+ndarray = "0.15"
+thiserror = "1.0"

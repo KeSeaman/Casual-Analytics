@@ -1,0 +1,27 @@
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "causal_rust_core"
+version = "0.1.0"
+description = "High-performance Causal Inference in Rust/Python"
+authors = [{name = "Antigravity", email = "antigravity@deepmind.com"}]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "polars>=1.0.0",
+    "marimo>=0.8.0",
+    "econml>=0.14.0",
+    "scikit-learn>=1.5.0",
+    "numpy>=1.26.0",
+    "joblib>=1.4.0",
+]
+
+[project.optional-dependencies]
+gpu = ["cuml-cu12>=24.04.0; platform_system == 'Linux'"]
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+python-source = "python"
+module-name = "causal_rust_core._causal_rust_core"
