@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-gpu = ["cuml-cu12>=24.04.0; platform_system == 'Linux'"]
+gpu = ["scikit-learn-intelex>=2024.0"]
 
 [tool.maturin]
 features = ["pyo3/extension-module"]
