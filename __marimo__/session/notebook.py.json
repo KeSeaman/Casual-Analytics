@@ -1,0 +1,99 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.17.7"
+  },
+  "cells": [
+    {
+      "id": "MJUe",
+      "code_hash": "8f0ec7ad49e2a3730d5d695ce9d3a7a6",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"high-performance-causal-inference-portfolio\">\ud83d\ude80 High-Performance Causal Inference Portfolio</h1>\n<span class=\"paragraph\">This project demonstrates a hybrid <strong>Rust/Python</strong> architecture for causal inference.</span>\n<ul>\n<li><strong>Rust Core</strong>: Ultra-fast OLS, IV/2SLS, and DiD implementations using <code>linfa</code> and <code>polars</code>.</li>\n<li><strong>Python Frontend</strong>: Interactive analysis with <code>marimo</code> and <code>econml</code>.</li>\n<li><strong>GPU Acceleration</strong>: Automatic fallback to <code>cuml</code> for Causal Forests.</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hbol",
+      "code_hash": "3a575f73e3a5cba8fa6829dbfc829b20",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "internal",
+          "evalue": "An internal error occurred: 4955af5c-00f8-43e7-95f4-7eaf39e42337",
+          "traceback": []
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "e70f2f1d4232a7f579d645d6c8707c93",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "internal",
+          "evalue": "An internal error occurred: 3ee500c8-cf28-486e-96af-73b4187f99cf",
+          "traceback": []
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "465348700c7a2f9653f382d580bab016",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "internal",
+          "evalue": "An internal error occurred: 4e7b78f1-3b77-4e61-8311-aaab5cd2ca9c",
+          "traceback": []
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "c1a355c2bf046230f210f54a16b8c294",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "internal",
+          "evalue": "An internal error occurred: 54bd715f-1cfc-4284-9187-8562b3207213",
+          "traceback": []
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "92b916a98912971fab8821e815a036d4",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "internal",
+          "evalue": "An internal error occurred: e6de11fe-d2f3-4f77-bc96-cf450f99a85c",
+          "traceback": []
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "6bcfe5cb8610cc7a0cb870294586a991",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "internal",
+          "evalue": "An internal error occurred: 98757563-e9fe-423b-b68c-ff0d8ce48e05",
+          "traceback": []
+        }
+      ],
+      "console": []
+    }
+  ]
+}
