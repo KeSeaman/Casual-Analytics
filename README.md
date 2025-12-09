@@ -133,22 +133,39 @@ treatment_effects = model.effect(X_test)
 | **DiD** | Difference-in-Differences | Policy evaluation |
 | **Causal Forest** | ML-based heterogeneous effects | Individual treatment effects |
 
-## 📈 Example Results
+## 📊 Results
 
-```
-=== NBER Dataset Analysis ===
-OLS Estimates:
-  Coefficient: 0.0532 ± 0.012
-  R-squared: 0.847
+Results from running the analysis on the **NBER NSW (National Supported Work)** dataset with 722 observations. This classic dataset evaluates a job training program's effect on earnings.
 
-IV/2SLS Estimates:
-  Treatment Effect: 0.092
-  First-stage F-stat: 42.3
+### Foundational Estimates
 
-DiD Estimates:
-  ATT: 0.078
-  Parallel Trends: ✓ Validated
-```
+| Method | Estimate | Description |
+|--------|----------|-------------|
+| **Neyman (Diff-in-Means)** | $886.30 | Simple difference between treated and control group means. The most straightforward estimator—compares average earnings of those who received training vs. those who didn't. |
+| **MLE (OLS)** | $806.51 | Ordinary Least Squares regression controlling for age, education, race, marital status, and prior earnings (re75). Adjusts for observable confounders to reduce bias. |
+| **Rubin (IPW)** | $799.45 | Inverse Probability Weighting using propensity scores. Reweights observations to balance treated/control groups on covariates, mimicking a randomized experiment. |
+
+### Interpretation
+
+- **Treatment Effect**: The job training program increased annual earnings by approximately **$800-886**
+- **Method Agreement**: All three estimators produce consistent results (~$800-890), suggesting robust findings
+- **Bias Correction**: OLS and IPW yield lower estimates than Neyman, indicating some positive selection into treatment
+- **Practical Significance**: An ~$800 increase in annual earnings represents meaningful economic impact for the target population
+
+### Advanced ML-Based Estimates
+
+| Method | Estimate | Description |
+|--------|----------|-------------|
+| **Causal Forest** | $827.26 | ML-based heterogeneous treatment effect estimator (EconML). Uses Random Forests to model outcome and treatment, allowing for individual-level treatment effects. The ATE represents the average across all individuals. |
+| **Mediation Total Effect** | $831.04 | Total causal effect decomposed into direct and indirect pathways through a mediator (prior earnings re75). |
+| **Mediation ADE (Direct)** | $834.41 | Average Direct Effect—the portion of treatment effect NOT mediated through re75. Shows the direct impact of training on earnings. |
+| **Mediation ACME (Indirect)** | -$3.37 | Average Causal Mediation Effect—the portion of effect flowing through the mediator (re75). The small negative value suggests minimal mediation through prior earnings. |
+
+### Key Insights
+
+- **Consistency Across Methods**: All methods (Neyman, OLS, IPW, Causal Forest) estimate treatment effects in the **$800-890 range**
+- **Direct vs. Indirect Effects**: Nearly all of the treatment effect is direct ($834), with negligible effect through prior earnings
+- **Heterogeneity**: Causal Forest enables exploring treatment effect heterogeneity across subgroups
 
 ## 🛠️ Development
 
