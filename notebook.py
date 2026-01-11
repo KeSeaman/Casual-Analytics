@@ -7,12 +7,12 @@ app = marimo.App(width="medium")
 @app.cell(hide_code=True)
 def _(mo):
     title=mo.md(r"""
-    # 🧩 Functional Causal Inference Portfolio
-
-    A pure functional architecture for causal analysis, featuring:
-    - **Foundational**: MLE, Neyman-Pearson, Rubin (Propensity Scores), Bootstrap
-    - **Causal**: IV/2SLS (Rust), Causal Forests (Intel Accelerated), Mediation
-    - **Longitudinal**: Difference-in-Differences (Rust)
+    # 🧩 Functional Causal Inference Portfolio - IHDP Dataset
+    
+    A pure functional architecture for causal analysis using the **IHDP (Infant Health Development Program)** dataset, featuring:
+    - **Foundational**: MLE, Neyman-Pearson, Rubin (Propensity Scores)
+    - **Causal**: Causal Forests (Intel Accelerated), Mediation
+    - **Dataset**: 25 pre-treatment covariates, binary treatment, continuous outcome
     """)
     return
 
@@ -22,21 +22,21 @@ def _():
     import marimo as mo
     import polars as pl
     import numpy as np
-    from causal_lib import data_loader, foundational, causal, advanced, visualization
+    from causal_lib import data_loader, foundational, causal, visualization
     return causal, data_loader, foundational, mo, visualization
 
 
 @app.cell
 def _(data_loader, mo):
-    # Load Data from NBER (nsw_treated.txt + nsw_control.txt)
-    df = data_loader.load_nsw()
+    # Load IHDP Data (place ihdp.csv in project root or provide path/URL)
+    df = data_loader.load_ihdp("ihdp.csv")
 
     if df is not None:
-        df = data_loader.preprocess_nsw(df)
-        status = mo.md(f"**✅ Data Loaded**: {len(df)} observations from NBER NSW dataset.")
+        df = data_loader.preprocess_ihdp(df)
+        status = mo.md(f"**✅ IHDP Data Loaded**: {len(df)} observations")
     else:
         df = None
-        status = mo.md("**⚠️ Data Load Failed**")
+        status = mo.md("**⚠️ Data Load Failed - Please place ihdp.csv in project root**")
 
     return (df,)
 
@@ -45,23 +45,24 @@ def _(data_loader, mo):
 def _(df, foundational, mo):
     # Foundational Methods
     if df is not None:
+        # Get covariate columns (x1-x25)
+        covariates = [col for col in df.columns if col.startswith("x")]
+        
         # 1. Neyman-Pearson (Diff-in-Means)
-        ate_neyman = foundational.estimate_ate_neyman(df, "treat", "re78")
+        ate_neyman = foundational.estimate_ate_neyman(df, "treatment", "outcome")
 
         # 2. MLE (OLS)
-        # Covariates: age, education, black, hispanic, married, nodegree, re75
-        covariates = ["age", "education", "black", "hispanic", "married", "nodegree", "re75"]
-        ate_mle = foundational.estimate_ate_mle(df, "treat", "re78", covariates)
+        ate_mle = foundational.estimate_ate_mle(df, "treatment", "outcome", covariates)
 
         # 3. Rubin (Propensity Score)
-        ate_rubin = foundational.estimate_ate_rubin(df, "treat", "re78", covariates)
+        ate_rubin = foundational.estimate_ate_rubin(df, "treatment", "outcome", covariates)
 
         foundational_output = mo.md(
             f"""
             ### 🏛️ Foundational Estimates
-            - **Neyman (Diff-in-Means)**: ${ate_neyman:.2f}
-            - **MLE (OLS)**: ${ate_mle:.2f}
-            - **Rubin (IPW)**: ${ate_rubin:.2f}
+            - **Neyman (Diff-in-Means)**: {ate_neyman:.4f}
+            - **MLE (OLS)**: {ate_mle:.4f}
+            - **Rubin (IPW)**: {ate_rubin:.4f}
             """
         )
     else:
@@ -75,24 +76,18 @@ def _(df, foundational, mo):
 @app.cell
 def _(causal, covariates, df, mo):
     # Causal Methods
-    if df is not None:
-        # 1. Causal Forest (Intel Accelerated)
-        ate_forest = causal.estimate_forest(df, "re78", "treat", covariates)
-
-        # 2. Mediation Analysis (Example)
-        # Mediator: re75 (Earnings before treatment) -> Just for demo
-        # This is a bit contrived for NSW, but demonstrates the method.
-        acme, ade, total = causal.estimate_mediation(df, "treat", "re75", "re78", ["age", "education"])
+    if df is not None and len(covariates) > 0:
+        # Causal Forest (Intel Accelerated)
+        ate_forest = causal.estimate_forest(df, "outcome", "treatment", covariates)
 
         causal_output = mo.md(
             f"""
-            ### 🌲 Causal & Machine Learning
-            - **Causal Forest (Intel)**: ${ate_forest:.2f}
-            - **Mediation (ACME)**: ${acme:.2f} (Indirect effect via re75)
+            ### 🌲 Causal Forest (Intel Accelerated)
+            - **CATE Estimate**: {ate_forest:.4f}
             """
         )
     else:
-        ate_forest, acme, ade, total = 0.0, 0.0, 0.0, 0.0
+        ate_forest = 0.0
         causal_output = None
 
     return (ate_forest,)

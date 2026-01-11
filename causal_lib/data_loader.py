@@ -1,80 +1,56 @@
 import polars as pl
 from typing import Optional
 
-def load_nsw(url: str = "") -> Optional[pl.DataFrame]:
+def load_ihdp(csv_path: str = "ihdp.csv") -> Optional[pl.DataFrame]:
     """
-    Loads the NSW dataset from NBER text files (treated and control).
+    Loads the IHDP (Infant Health Development Program) dataset.
+    
+    Schema:
+    - treatment: Binary (0/1) indicating intensive intervention
+    - outcome (y_factual): Continuous cognitive test score
+    - x1-x25: 25 pre-treatment covariates (6 continuous, 19 binary)
+    
+    Args:
+        csv_path: Path to IHDP CSV file (can be URL or local path)
+    
+    Returns:
+        Polars DataFrame or None if loading fails
     """
-    treated_url = "https://users.nber.org/~rdehejia/data/nsw_treated.txt"
-    control_url = "https://users.nber.org/~rdehejia/data/nsw_control.txt"
-    
-    # Column names based on user description
-    # treatment, age, education, black, hispanic, married, nodegree, re75, re78
-    columns = ["treat", "age", "education", "black", "hispanic", "married", "nodegree", "re75", "re78"]
-    
     try:
-        print(f"🔄 Fetching NBER data...")
+        print(f"🔄 Loading IHDP data from: {csv_path}")
+        df = pl.read_csv(csv_path)
         
-        def load_raw_nber(url):
-            # Read as single column (hack with non-existent separator)
-            # and parse using regex for multiple spaces
-            df_raw = pl.read_csv(url, has_header=False, separator="|", new_columns=["raw"])
+        # Verify expected columns exist
+        if "treatment" in df.columns and ("y_factual" in df.columns or "outcome" in df.columns):
+            # Rename y_factual to outcome if needed for consistency
+            if "y_factual" in df.columns and "outcome" not in df.columns:
+                df = df.rename({"y_factual": "outcome"})
             
-            # Split by whitespace
-            # Extract all non-whitespace sequences
-            # This returns a list of strings
-            df_parsed = df_raw.select(
-                pl.col("raw").str.extract_all(r"\S+").alias("parts")
-            )
-            
-            # Convert list to struct to unnest
-            # We know there are 9 columns
-            # treatment, age, education, black, hispanic, married, nodegree, re75, re78
-            cols = ["treat", "age", "education", "black", "hispanic", "married", "nodegree", "re75", "re78"]
-            
-            df_struct = df_parsed.select(
-                [pl.col("parts").list.get(i).alias(cols[i]) for i in range(len(cols))]
-            )
-            
-            return df_struct
-
-        df_treated = load_raw_nber(treated_url)
-        df_control = load_raw_nber(control_url)
-        
-        # Combine
-        df = pl.concat([df_treated, df_control])
-        
-        # Cast columns to appropriate types
-        int_cols = ["treat", "age", "education", "black", "hispanic", "married", "nodegree"]
-        float_cols = ["re75", "re78"]
-        
-        df = df.with_columns([
-            pl.col(c).cast(pl.Float64).cast(pl.Int64) for c in int_cols # Cast to float first (scientific notation) then int
-        ])
-        df = df.with_columns([
-            pl.col(c).cast(pl.Float64) for c in float_cols
-        ])
-        
-        print(f"✅ Loaded NBER Data: {len(df)} rows ({len(df_treated)} treated, {len(df_control)} control)")
-        return df
-        
-    except Exception as e:
-        print(f"⚠️ Failed to load NBER Data: {e}")
-        try:
-            print("🔄 Attempting to load local 'nsw.csv'...")
-            df = pl.read_csv("nsw.csv")
-            print("✅ Loaded local NSW Data")
+            print(f"✅ Loaded IHDP Data: {len(df)} observations")
+            print(f"   - Treatment: {df['treatment'].sum()} treated, {len(df) - df['treatment'].sum()} control")
             return df
-        except Exception as e_local:
-            print(f"❌ Failed to load local data: {e_local}")
+        else:
+            print(f"⚠️ IHDP schema not recognized. Expected 'treatment' and 'y_factual'/'outcome' columns.")
             return None
+            
+    except Exception as e:
+        print(f"❌ Failed to load IHDP Data: {e}")
+        return None
 
-def preprocess_nsw(df: pl.DataFrame) -> pl.DataFrame:
+def preprocess_ihdp(df: pl.DataFrame) -> pl.DataFrame:
     """
-    Pure function to preprocess the NSW dataset.
-    Ensures correct data types and handles missing values if any.
+    Preprocesses the IHDP dataset.
+    Ensures correct data types and handles missing values.
     """
-    # Example preprocessing: Ensure columns are float where needed
-    # NSW Mixtape schema: treat, re78, etc. usually int or float.
-    # Polars handles type inference well, but we can enforce it.
-    return df.drop_nulls()
+    # Drop nulls if any
+    df = df.drop_nulls()
+    
+    # Ensure treatment is integer (0/1)
+    if "treatment" in df.columns:
+        df = df.with_columns(pl.col("treatment").cast(pl.Int64))
+    
+    # Ensure outcome is float
+    if "outcome" in df.columns:
+        df = df.with_columns(pl.col("outcome").cast(pl.Float64))
+    
+    return df
